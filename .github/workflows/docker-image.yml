@@ -15,4 +15,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        CONTAINER_NAME: node-http-server
+        REPO_NAME: node-http-server
+      run: |
+        echo $GITHUB_TOKEN | docker login -u publisher --password-stdin ghcr.io
+        docker build --tag ghcr.io/e3k-dev/${REPO_NAME}/${CONTAINER_NAME} .
+        docker push ghcr.io/e3k-dev/${REPO_NAME}/${CONTAINER_NAME}
+
+#docker build . --file Dockerfile --tag my-image-name:$(date +%s)
